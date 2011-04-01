@@ -1,0 +1,20 @@
+webcam_server README
+--------------------
+
+This is a fork of the webcam_server (http://webcamserver.sourceforge.net/) project originally created by Donn Morrison.
+
+
+License
+-------
+This software is made available under the GNU Public License. For details, see
+the file COPYING.
+
+Warranty
+--------
+
+This software contains no warranty.
+
+Installation
+------------
+See INSTALL.
+
