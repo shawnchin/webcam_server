@@ -1,0 +1,11 @@
+*.o
+*.in
+aclocal.m4
+autom4te.cache
+configure
+depcomp
+*Makefile
+config.log
+config.status
+src/.deps
+src/webcam_server

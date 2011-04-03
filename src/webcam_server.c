@@ -245,16 +245,16 @@ void usage()
 {
 printf("webcam_server %s, copyright 2001-2004 Donn Morrison\n\n", get_version());
 printf("usage: webcam_server [options]\n\n\
-     option             description [default value]\n\n\
+     option              description [default value]\n\n\
      -a                 - test mode (fps) [no]\n\
      -c \"caption\"       - caption text [%%Y-%%m-%%d %%H:%%M:%%S], \"\" for none\n\
      -d video_device    - v4l compliant device [/dev/video]\n\
      -Ds                - disable stream support [no]\n\
      -Dh                - disable http support [no]\n\
-     -fh		- flip image horizontally\n\
-     -fv		- flip image vertically\n\
+     -fh                - flip image horizontally\n\
+     -fv                - flip image vertically\n\
      -g geometry        - change default geometry (WIDTHxHEIGHT) [320x240]\n\
-     -G gamma		- gamma correction (-100-100) [0]\n\
+     -G gamma           - gamma correction (-100-100) [0]\n\
      -h                 - this help screen\n\
      -l logfile         - log to file [/var/log/webcam_server.log]\n\
      -mb                - maximum bytes per connection [0 (disabled)]\n\
@@ -273,7 +273,9 @@ printf("usage: webcam_server [options]\n\n\
      -T x,y             - xy-position of text [0,0]\n\
      -v                 - verbose [no]\n\
      -x                 - swap RGB -> BGR [no]\n\
-     -Xa                - Enable contrast autoscaling [no]\n\
+     \n\
+     Extended Options:\n\
+     -Xc                - Enhance contrast [no]\n\
 \n");
 
 /* ** currently not implemented
@@ -430,33 +432,18 @@ int parse_args(struct caminfo *cam, int argc, char *argv[])
 						res = -1;
 				}
 				break;
+
+           /* extended options */
            case 'X':
                 switch(argv[i][2])
                 {
-                    case 'a':
+                    case 'c':
                         cam->o.x_autoscale = 1;
                         break;
 
                 }
                 break;
-/* ** currently not implemented
-			case 'E':
-				switch(argv[i][2])
-				{
-					case 'a':
-						cam->o.allow_admin = 1;
-						break;
-					default:
-						res = -1;
-				}
-				break;
-			case 'e':
-				if(i+1 < argc)
-					cam->o.admin_pw = argv[++i];
-				else
-					res = -1;
-				break;
-*/
+
 			case 'm':
 				if(i+1 < argc)
 				switch(argv[i][2])
