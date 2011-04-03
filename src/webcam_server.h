@@ -53,6 +53,7 @@ struct options
 	int max_stream_seconds;
 	int max_stream_frames;
 	
+    int x_autoscale;
 /* ** currently not implemented
 	int allow_admin;
 	char *admin_pw;

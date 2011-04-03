@@ -72,13 +72,15 @@ void print_rgb(char * hdr, struct RGB x) { printf("rgb:%s = %d,%d,%d\n", hdr,x.r
 */
 #define DEF_PALETTE		-1
 
+#define DEF_X_AUTOSCALE 0
+
 char *str_replace(const char *str, const char *find, const char *replace)
 {
 	char *ptr,*ret;
 	int found=0;
 	ptr = (char*)str;
 
-	while((ptr=strstr(ptr, find)))
+    while((ptr=strstr(ptr, find)))
 	{
 		char *start,*end;
 		int slen,elen,rlen,flen;
@@ -271,6 +273,7 @@ printf("usage: webcam_server [options]\n\n\
      -T x,y             - xy-position of text [0,0]\n\
      -v                 - verbose [no]\n\
      -x                 - swap RGB -> BGR [no]\n\
+     -Xa                - Enable contrast autoscaling [no]\n\
 \n");
 
 /* ** currently not implemented
@@ -427,6 +430,15 @@ int parse_args(struct caminfo *cam, int argc, char *argv[])
 						res = -1;
 				}
 				break;
+           case 'X':
+                switch(argv[i][2])
+                {
+                    case 'a':
+                        cam->o.x_autoscale = 1;
+                        break;
+
+                }
+                break;
 /* ** currently not implemented
 			case 'E':
 				switch(argv[i][2])
@@ -601,6 +613,8 @@ int main(int argc, char *argv[])
 	cam->o.allow_admin = DEF_ALLOW_ADMIN;
 */
 	cam->o.palette = DEF_PALETTE;
+
+    cam->o.x_autoscale = DEF_X_AUTOSCALE;
 
 	/* overwrite defaults with command line args */
 	if(parse_args(cam, argc, argv) < 0)

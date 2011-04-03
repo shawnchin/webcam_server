@@ -25,6 +25,7 @@
 #include "webcam_server.h"
 #include "imgqueue.h"
 #include "filters.h"
+#include "x_filters.h"
 #include "camera.h"
 #include "unpalette.h"
 
@@ -105,6 +106,10 @@ int grab_thread(struct caminfo *cam)
 		/* adjust gamma? */
 		if(cam->o.gamma)
 			adjust_gamma(img, cam->o.gamma);
+
+        /* autoscale contrast */
+        if (cam->o.x_autoscale)
+            x_autoscale(img);
 
 		/* flip horiz/vert */
 		if(cam->o.flip_horiz)
