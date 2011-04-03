@@ -277,7 +277,7 @@ printf("usage: webcam_server [options]\n\n\
      -x                 - swap RGB -> BGR [no]\n\
      \n\
      Extended Options:\n\
-     -Xc                - Enhance contrast [no]\n\
+     -Xa                - Autoscale colour range to enhance contrast [no]\n\
      -Fb                - Filter: black & while [no]\n\
      -Fs                - Filter: sepia [no]\n\
 \n");
@@ -441,7 +441,7 @@ int parse_args(struct caminfo *cam, int argc, char *argv[])
            case 'X':
                 switch(argv[i][2])
                 {
-                    case 'c':
+                    case 'a':
                         cam->o.x_autoscale = 1;
                         break;
 
