@@ -10,5 +10,6 @@
 
 void x_autoscale(struct image* img);
 void x_greyscale(struct image* img);
+void x_sepia(struct image* img);
 
 #endif

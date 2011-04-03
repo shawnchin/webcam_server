@@ -115,6 +115,10 @@ int grab_thread(struct caminfo *cam)
         if (cam->o.x_greyscale)
             x_greyscale(img);
 
+        /* filter: sepia */
+        if (cam->o.x_sepia)
+            x_sepia(img);
+        
 		/* flip horiz/vert */
 		if(cam->o.flip_horiz)
 			fliph(img);

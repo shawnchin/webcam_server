@@ -56,6 +56,7 @@ struct options
     /* Extended options */
     int x_autoscale;
     int x_greyscale;
+    int x_sepia;
     
 	char *logfile;
 };

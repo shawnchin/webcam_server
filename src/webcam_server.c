@@ -74,6 +74,7 @@ void print_rgb(char * hdr, struct RGB x) { printf("rgb:%s = %d,%d,%d\n", hdr,x.r
 
 #define DEF_X_AUTOSCALE 0
 #define DEF_X_GREYSCALE 0
+#define DEF_X_SEPIA 0
 
 char *str_replace(const char *str, const char *find, const char *replace)
 {
@@ -278,6 +279,7 @@ printf("usage: webcam_server [options]\n\n\
      Extended Options:\n\
      -Xc                - Enhance contrast [no]\n\
      -Fb                - Filter: black & while [no]\n\
+     -Fs                - Filter: sepia [no]\n\
 \n");
 
 /* ** currently not implemented
@@ -450,6 +452,10 @@ int parse_args(struct caminfo *cam, int argc, char *argv[])
                 {
                     case 'b':
                         cam->o.x_greyscale = 1;
+                        break;
+                    case 's':
+                        cam->o.x_sepia = 1;
+                        break;
                 }
                 break;
 
@@ -612,6 +618,7 @@ int main(int argc, char *argv[])
 
     cam->o.x_autoscale = DEF_X_AUTOSCALE;
     cam->o.x_greyscale = DEF_X_GREYSCALE;
+    cam->o.x_sepia = DEF_X_SEPIA;
 
 	/* overwrite defaults with command line args */
 	if(parse_args(cam, argc, argv) < 0)
