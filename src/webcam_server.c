@@ -73,6 +73,7 @@ void print_rgb(char * hdr, struct RGB x) { printf("rgb:%s = %d,%d,%d\n", hdr,x.r
 #define DEF_PALETTE		-1
 
 #define DEF_X_AUTOSCALE 0
+#define DEF_X_GREYSCALE 0
 
 char *str_replace(const char *str, const char *find, const char *replace)
 {
@@ -276,6 +277,7 @@ printf("usage: webcam_server [options]\n\n\
      \n\
      Extended Options:\n\
      -Xc                - Enhance contrast [no]\n\
+     -Fb                - Filter: black & while [no]\n\
 \n");
 
 /* ** currently not implemented
@@ -443,6 +445,13 @@ int parse_args(struct caminfo *cam, int argc, char *argv[])
 
                 }
                 break;
+           case 'F':
+                switch(argv[i][2])
+                {
+                    case 'b':
+                        cam->o.x_greyscale = 1;
+                }
+                break;
 
 			case 'm':
 				if(i+1 < argc)
@@ -602,6 +611,7 @@ int main(int argc, char *argv[])
 	cam->o.palette = DEF_PALETTE;
 
     cam->o.x_autoscale = DEF_X_AUTOSCALE;
+    cam->o.x_greyscale = DEF_X_GREYSCALE;
 
 	/* overwrite defaults with command line args */
 	if(parse_args(cam, argc, argv) < 0)

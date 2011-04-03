@@ -111,6 +111,10 @@ int grab_thread(struct caminfo *cam)
         if (cam->o.x_autoscale)
             x_autoscale(img);
 
+        /* filter: greyscale */
+        if (cam->o.x_greyscale)
+            x_greyscale(img);
+
 		/* flip horiz/vert */
 		if(cam->o.flip_horiz)
 			fliph(img);

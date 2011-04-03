@@ -14,6 +14,10 @@
 #include "webcam_server.h"
 #include "x_filters.h"
 
+#define RED(buf, elem)   buf[elem*3]
+#define GREEN(buf, elem) buf[elem*3 + 1]
+#define BLUE(buf, elem)  buf[elem*3 + 2]
+
 /* autoscaling - set lightest value as white, and darkest as black 
  *    range, R = max - min + 1
  *    scale, S = 256 / R
@@ -25,7 +29,7 @@ void x_autoscale(struct image* img) {
     float scale;
     int size = img->bufsize;
     unsigned char *buf = img->buf;
-    int min=255, max=0;
+    unsigned int min=255, max=0;
 
     for (i = 0; i < size; i++) {
         if (buf[i] < min) min = buf[i];
@@ -38,28 +42,19 @@ void x_autoscale(struct image* img) {
     }
 }
 
-/*
-void adjust_gamma(struct image* img, int corr)
-{
-	int i=img->bufsize;
-	char *p = img->buf;
-	while(--i)
-	{
-		if(corr > 0)
-		{
-			if(p[0] + corr <= 255)
-				p[0] += corr;
-			else
-				p[0] = 255;
-		}
-		else
-		{
-			if(p[0] + corr >= 0)
-				p[0] += corr;
-			else
-				p[0] = 0;
-		}
-		p++;
-	}
+/* convert to greyscale image 
+ * R - 30%, G - 59%, B - 11%
+ */
+void x_greyscale(struct image* img) {
+    int i, R, G, B;
+    unsigned int v;
+    int elems = img->bufsize / 3;
+    unsigned char *buf = img->buf;
+    for (i = 0; i < elems; i++) {
+        v = (unsigned int)(RED(buf, i) * 0.3 + GREEN(buf, i) * 0.59 + BLUE(buf, i) * 0.11);
+        RED(buf, i) = v;
+        GREEN(buf, i) = v;
+        BLUE(buf, i) = v;
+    }
 }
-*/
+

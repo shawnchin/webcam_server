@@ -9,5 +9,6 @@
 #define _X_FILTERS_H_INCLUDED_
 
 void x_autoscale(struct image* img);
+void x_greyscale(struct image* img);
 
 #endif
