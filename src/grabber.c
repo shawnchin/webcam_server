@@ -45,6 +45,7 @@ int grab_thread(struct caminfo *cam)
 {
 	char *jpeg_data = NULL;
 	int jpeg_len = 0;
+    int is_yuv = 0;
 	struct imagequeue *new;
 	struct image *img = NULL, *tmp = NULL;
 
@@ -107,18 +108,22 @@ int grab_thread(struct caminfo *cam)
 		if(cam->o.gamma)
 			adjust_gamma(img, cam->o.gamma);
 
-        /* autoscale contrast */
-        if (cam->o.x_autoscale)
-            x_autoscale(img);
-
         /* filter: greyscale */
-        if (cam->o.x_greyscale)
+        if (cam->o.x_greyscale) 
             x_greyscale(img);
-
+        
         /* filter: sepia */
         if (cam->o.x_sepia)
             x_sepia(img);
         
+        /* histogram equalisation */
+        if (cam->o.x_histequal) 
+            x_histequal(img);
+        
+        /* autoscale contrast */
+        if (cam->o.x_autoscale) {
+            x_autoscale(img);
+        }
 		/* flip horiz/vert */
 		if(cam->o.flip_horiz)
 			fliph(img);

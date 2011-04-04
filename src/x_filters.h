@@ -9,6 +9,7 @@
 #define _X_FILTERS_H_INCLUDED_
 
 void x_autoscale(struct image* img);
+void x_histequal(struct image* img);
 void x_greyscale(struct image* img);
 void x_sepia(struct image* img);
 

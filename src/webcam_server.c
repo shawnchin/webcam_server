@@ -66,13 +66,10 @@ void print_rgb(char * hdr, struct RGB x) { printf("rgb:%s = %d,%d,%d\n", hdr,x.r
 #define DEF_MAX_STREAM_BYTES	0
 #define DEF_MAX_STREAM_SECONDS	0
 #define DEF_MAX_STREAM_FRAMES	0
-/* ** currently not implemented
-#define DEF_ALLOW_ADMIN		0
-#define DEF_ADMIN_PW		"\0"
-*/
 #define DEF_PALETTE		-1
 
 #define DEF_X_AUTOSCALE 0
+#define DEF_X_HISTEQUAL 0
 #define DEF_X_GREYSCALE 0
 #define DEF_X_SEPIA 0
 
@@ -277,7 +274,8 @@ printf("usage: webcam_server [options]\n\n\
      -x                 - swap RGB -> BGR [no]\n\
      \n\
      Extended Options:\n\
-     -Xa                - Autoscale colour range to enhance contrast [no]\n\
+     -Xa                - Autoscale colour range [no]\n\
+     -Xh                - Histogram Equalisation [no]\n\
      -Fb                - Filter: black & while [no]\n\
      -Fs                - Filter: sepia [no]\n\
 \n");
@@ -443,6 +441,9 @@ int parse_args(struct caminfo *cam, int argc, char *argv[])
                 {
                     case 'a':
                         cam->o.x_autoscale = 1;
+                        break;
+                    case 'h':
+                        cam->o.x_histequal = 1;
                         break;
 
                 }
@@ -610,13 +611,10 @@ int main(int argc, char *argv[])
 	cam->o.max_stream_bytes = DEF_MAX_STREAM_BYTES;
 	cam->o.max_stream_seconds = DEF_MAX_STREAM_SECONDS;
 	cam->o.max_stream_frames = DEF_MAX_STREAM_FRAMES;
-/* ** currently not implemented
-	cam->o.admin_pw = DEF_ADMIN_PW;
-	cam->o.allow_admin = DEF_ALLOW_ADMIN;
-*/
 	cam->o.palette = DEF_PALETTE;
 
     cam->o.x_autoscale = DEF_X_AUTOSCALE;
+    cam->o.x_histequal = DEF_X_HISTEQUAL;
     cam->o.x_greyscale = DEF_X_GREYSCALE;
     cam->o.x_sepia = DEF_X_SEPIA;
 

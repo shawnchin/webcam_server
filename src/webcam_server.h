@@ -55,6 +55,7 @@ struct options
 	
     /* Extended options */
     int x_autoscale;
+    int x_histequal;
     int x_greyscale;
     int x_sepia;
     
