@@ -116,14 +116,15 @@ int grab_thread(struct caminfo *cam)
         if (cam->o.x_sepia)
             x_sepia(img);
         
-        /* histogram equalisation */
-        if (cam->o.x_histequal) 
-            x_histequal(img);
-        
         /* autoscale contrast */
         if (cam->o.x_autoscale) {
             x_autoscale(img);
         }
+        
+        /* histogram equalisation */
+        if (cam->o.x_histequal) 
+            x_histequal(img);
+        
 		/* flip horiz/vert */
 		if(cam->o.flip_horiz)
 			fliph(img);
