@@ -275,7 +275,9 @@ printf("usage: webcam_server [options]\n\n\
      \n\
      Extended Options:\n\
      -Xa                - Autoscale colour range [no]\n\
-     -Xh                - Histogram Equalisation [no]\n\
+     -Xha               - Histogram Equalisation of avg values[no]\n\
+     -Xhy               - Histogram Equalisation of luma (YUV) [no]\n\
+     -Xhh               - Histogram Equalisation of brightness (HSV) [no]\n\
      -Fb                - Filter: black & while [no]\n\
      -Fs                - Filter: sepia [no]\n\
 \n");
@@ -443,7 +445,18 @@ int parse_args(struct caminfo *cam, int argc, char *argv[])
                         cam->o.x_autoscale = 1;
                         break;
                     case 'h':
-                        cam->o.x_histequal = 1;
+                        switch(argv[i][3])
+                        {
+                            case 'a':
+                                cam->o.x_histequal_avg = 1;
+                                break;
+                            case 'h':
+                                cam->o.x_histequal_hsv = 1;
+                                break;
+                            case 'y':
+                                cam->o.x_histequal_yuv = 1;
+                                break;
+                        }
                         break;
 
                 }
@@ -614,7 +627,9 @@ int main(int argc, char *argv[])
 	cam->o.palette = DEF_PALETTE;
 
     cam->o.x_autoscale = DEF_X_AUTOSCALE;
-    cam->o.x_histequal = DEF_X_HISTEQUAL;
+    cam->o.x_histequal_avg = DEF_X_HISTEQUAL;
+    cam->o.x_histequal_yuv = DEF_X_HISTEQUAL;
+    cam->o.x_histequal_hsv = DEF_X_HISTEQUAL;
     cam->o.x_greyscale = DEF_X_GREYSCALE;
     cam->o.x_sepia = DEF_X_SEPIA;
 

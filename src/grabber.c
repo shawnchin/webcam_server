@@ -122,8 +122,12 @@ int grab_thread(struct caminfo *cam)
         }
         
         /* histogram equalisation */
-        if (cam->o.x_histequal) 
-            x_histequal(img);
+        if (cam->o.x_histequal_hsv) 
+            x_histequal(img, HSV);
+        if (cam->o.x_histequal_avg) 
+            x_histequal(img, AVG);
+        if (cam->o.x_histequal_yuv) 
+            x_histequal(img, YUV);
         
 		/* flip horiz/vert */
 		if(cam->o.flip_horiz)

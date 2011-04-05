@@ -53,8 +53,33 @@ static void YUVtoRGB(struct image* img) {
     }
 }
 
-/* returns max of R,G,B */
-static unsigned char get_brightness(unsigned char pixel[3]){
+/* uses Y component of YUV as brightness */
+static unsigned char get_yuv_brightness(unsigned char pixel[3]){
+    return clamp(0.299*pixel[0] + 0.587*pixel[1] + 0.114*pixel[2]);
+}
+static void update_yuv_brightness(unsigned char pixel[3], unsigned char Y) {
+    unsigned char U,V;
+    U = clamp(-0.14713*pixel[0] - 0.28886*pixel[1] + 0.436*pixel[2]);
+    V = clamp(0.615*pixel[0] - 0.51499*pixel[1] - 0.10001*pixel[2]);
+    pixel[0] = clamp(Y + 1.13983*V);
+    pixel[1] = clamp(Y - 0.39465*U - 0.58060*V);
+    pixel[2] = clamp(Y + 2.03211*U);
+}
+
+/* uses average of R,G,B as brightness */
+static unsigned char get_avg_brightness(unsigned char pixel[3]){
+    return (pixel[0] + pixel[1] + pixel[2]) / 3;
+}
+static void update_avg_brightness(unsigned char pixel[3], unsigned char new_v) {
+    float scale = (float)new_v / get_avg_brightness(pixel);
+    pixel[0] = clamp(pixel[0] * scale);
+    pixel[1] = clamp(pixel[1] * scale);
+    pixel[2] = clamp(pixel[2] * scale);
+}
+
+
+/* returns V of HSV (max of R,G,B) */
+static unsigned char get_hsv_brightness(unsigned char pixel[3]){
     unsigned char v;
     v = (pixel[0] > pixel[1]) ? pixel[0] : pixel[1];
     return (v > pixel[2]) ? v : pixel[2];
@@ -64,7 +89,7 @@ static unsigned char get_brightness(unsigned char pixel[3]){
  * To set a new brightness value, we'll need to first work out the HSV
  * representation, update V, then convert it back to RGB.
  */
-static void update_brightness(unsigned char pixel[3], int new_v) {
+static void update_hsv_brightness(unsigned char pixel[3], unsigned char new_v) {
     unsigned char r = pixel[0];
     unsigned char g = pixel[1];
     unsigned char b = pixel[2];
@@ -73,7 +98,8 @@ static void update_brightness(unsigned char pixel[3], int new_v) {
     int sector;
     
     /* brightness, V */
-    v = get_brightness(pixel);
+    v = get_hsv_brightness(pixel);
+    if (v == new_v) return;
 
     /* get min value */
     min = (r < g) ? r : g;
@@ -130,29 +156,14 @@ static void update_brightness(unsigned char pixel[3], int new_v) {
     }
 }
 
-/* histogram equalisation 
+/* convert a histogram to a LUT for histogram equilisation
  *                 cdf(v) - cdf_min 
  * h(v) = round ( ------------------  * 255 )
  *                  size - cdf_min  
  */
-
-void x_histequal(struct image* img) {
-    int i, elems = img->bufsize/3;
-    int cdf_min;
-    unsigned int offset;
-    float scale;
-    unsigned char v;
-    unsigned char *buf = img->buf;
-    int hist[256];
-
-    /* build histogram using Y component */
-    for (i = 0; i < 256; i++) hist[i] = 0;
-    for (i = 0; i < elems; i++) {
-        offset = i * 3;
-        v = get_brightness(buf + offset);
-        hist[(int)v]++; 
-    }
-
+static void build_he_lookup(int hist[256], int elems) {
+    int i, cdf_min;
+    
     /* convert to cumulative distribution function (cdf) */
     for (i = 1; i < 256; i++) { hist[i] = hist[i] + hist[i-1]; }
     
@@ -168,14 +179,52 @@ void x_histequal(struct image* img) {
     for (i = 0; i < 256; i++) { 
         hist[i] = ((double)(hist[i] - cdf_min) / (elems - cdf_min)) * 255;
     }
+}
 
-    /* map to new values of Y */
+/* histogram equalisation */
+void x_histequal(struct image* img, enum LUMA_MODEL mode) {
+    int i, elems = img->bufsize/3;
+    int cdf_min;
+    unsigned int offset;
+    float scale;
+    unsigned char v;
+    unsigned char *buf = img->buf;
+    int hist[256];
+    static void (*update_brightness)(unsigned char pixel[3], unsigned char new_v);
+    static unsigned char (*get_brightness)(unsigned char pixel[3]);
+    
+    switch (mode) {
+        case AVG:
+            update_brightness = update_avg_brightness;
+            get_brightness = get_avg_brightness;
+            break;
+        case YUV:
+            update_brightness = update_yuv_brightness;
+            get_brightness = get_yuv_brightness;
+            break;
+        default: /* HSV */
+            update_brightness = update_hsv_brightness;
+            get_brightness = get_hsv_brightness;
+            break;
+    }
+
+    /* build histogram */
+    for (i = 0; i < 256; i++) hist[i] = 0;
+    for (i = 0; i < elems; i++) {
+        offset = i * 3;
+        v = get_brightness(buf + offset);
+        hist[(int)v]++; 
+    }
+
+    /* convert hist to LUT */
+    build_he_lookup(hist, elems);
+    
+    /* map to new values */
     for (i = 0; i < elems; i++) {
         offset = i*3;
         v = get_brightness(buf + offset);
-        update_brightness(buf + offset, hist[(int)v]);
+        update_brightness(buf + offset, (unsigned char)hist[(int)v]);
     }
-    
 }
 
 /* autoscaling 
